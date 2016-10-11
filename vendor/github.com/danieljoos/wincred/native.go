@@ -127,7 +127,7 @@ func nativeCredEnumerate(filter string, all bool) ([]*Credential, error) {
 		return nil, err
 	}
 	defer procCredFree.Call(pcreds)
-	pcredsSlice := (*[1 << 30]uintptr)(unsafe.Pointer(pcreds))[:count:count]
+	pcredsSlice := (*[1 << 27]uintptr)(unsafe.Pointer(pcreds))[:count:count]
 	creds := make([]*Credential, count)
 	for i := range creds {
 		creds[i] = nativeToCredential((*nativeCREDENTIAL)(unsafe.Pointer(pcredsSlice[i])))
