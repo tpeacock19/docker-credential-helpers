@@ -1,6 +1,9 @@
 package wincred
 
 import (
+	"bytes"
+	"strings"
+
 	winc "github.com/danieljoos/wincred"
 	"github.com/docker/docker-credential-helpers/credentials"
 )
@@ -14,6 +17,8 @@ func (h Wincred) Add(creds *credentials.Credentials) error {
 	g.UserName = creds.Username
 	g.CredentialBlob = []byte(creds.Secret)
 	g.Persist = winc.PersistLocalMachine
+	g.Attributes = []winc.CredentialAttribute{{"label", []byte(credentials.CredsLabel)}}
+
 	return g.Write()
 }
 
@@ -35,10 +40,17 @@ func (h Wincred) Get(serverURL string) (string, string, error) {
 	if g == nil {
 		return "", "", credentials.NewErrCredentialsNotFound()
 	}
-	return g.UserName, string(g.CredentialBlob), nil
+	for _, attr := range g.Attributes {
+		if strings.Compare(attr.Keyword, "label") == 0 &&
+			bytes.Compare(attr.Value, []byte(credentials.CredsLabel)) == 0 {
+
+			return g.UserName, string(g.CredentialBlob), nil
+		}
+	}
+	return "", "", credentials.NewErrCredentialsNotFound()
 }
 
-// List returns the stored URLs and corresponding usernames.
+// List returns the stored URLs and corresponding usernames for a given credentials label.
 func (h Wincred) List() (map[string]string, error) {
 	creds, err := winc.List()
 	if err != nil {
@@ -47,7 +59,16 @@ func (h Wincred) List() (map[string]string, error) {
 
 	resp := make(map[string]string)
 	for i := range creds {
-		resp[creds[i].TargetName] = creds[i].UserName
+		attrs := creds[i].Attributes
+		for _, attr := range attrs {
+			if strings.Compare(attr.Keyword, "label") == 0 &&
+				bytes.Compare(attr.Value, []byte(credentials.CredsLabel)) == 0 {
+
+				resp[creds[i].TargetName] = creds[i].UserName
+			}
+		}
+
 	}
+
 	return resp, nil
 }
