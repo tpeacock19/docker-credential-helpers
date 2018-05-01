@@ -17,7 +17,7 @@ import (
 	"github.com/docker/docker-credential-helpers/credentials"
 )
 
-const PASS_FOLDER = "docker-credential-helpers"
+const PASS_FOLDER = "protonmail-credentials"
 
 var (
 	PassInitialized bool
@@ -30,7 +30,7 @@ func init() {
 	// just explictily check that pass actually can store and retreive a
 	// password.
 	password := "pass is initialized"
-	name := path.Join(PASS_FOLDER, "docker-pass-initialized-check")
+	name := path.Join(PASS_FOLDER, "pm-pass-initialized-check")
 
 	_, err := runPass(password, "insert", "-f", "-m", name)
 	if err != nil {
@@ -180,7 +180,7 @@ func (h Pass) Get(serverURL string) (string, string, error) {
 
 	if _, err := os.Stat(path.Join(getPassDir(), PASS_FOLDER, encoded)); err != nil {
 		if os.IsNotExist(err) {
-			return "", "", nil;
+			return "", "", nil
 		}
 
 		return "", "", err
