@@ -9,6 +9,7 @@ package secretservice
 import "C"
 import (
 	"errors"
+	"fmt"
 	"unsafe"
 
 	"github.com/docker/docker-credential-helpers/credentials"
@@ -94,7 +95,9 @@ func (h Secretservice) List() (map[string]string, error) {
 	err := C.list(credsLabelC, &pathsC, &acctsC, &listLenC)
 	if err != nil {
 		defer C.g_error_free(err)
-		return nil, errors.New("Error from list function in secretservice_linux.c likely due to error in secretservice library")
+		code := C.errcode(err)
+		msg := C.GoString(C.errmsg(err))
+		return nil, fmt.Errorf("Error %d while listing from secretservice library: %s", code, msg)
 	}
 	defer C.freeListData(&pathsC, listLenC)
 	defer C.freeListData(&acctsC, listLenC)
