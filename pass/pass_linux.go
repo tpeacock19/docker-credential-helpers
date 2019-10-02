@@ -16,7 +16,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/ProtonMail/docker-credential-helpers/credentials"
+	"github.com/docker/docker-credential-helpers/credentials"
 )
 
 const PASS_FOLDER = "protonmail-credentials"
