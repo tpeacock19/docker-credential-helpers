@@ -4,6 +4,15 @@ This changelog tracks the releases of docker-credential-helpers.
 This project includes different binaries per platform.
 The platform released is identified after the tag name.
 
+## v1.1.0
+
+- Add go module
+- Bump wincred dependency
+
+## v1.0.0
+
+- Initial version of fork
+
 ## v0.6.0 (Go client, Linux)
 
 - New credential helper on Linux using `pass`
