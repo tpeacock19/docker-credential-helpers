@@ -97,7 +97,7 @@ func (h Pass) Delete(serverURL string) error {
 	}
 
 	encoded := base64.URLEncoding.EncodeToString([]byte(serverURL))
-	_, err := h.runPass("", "rm", "-rf", path.Join(PASS_FOLDER, encoded))
+	_, err := h.runPass("", "rm", "-r", "-f", path.Join(PASS_FOLDER, encoded))
 	return err
 }
 
